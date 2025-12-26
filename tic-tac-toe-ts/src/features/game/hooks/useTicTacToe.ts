@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { calculateWinner, type Player } from "../utils/calculateWinner";
-
-interface HistoryItem {
-    squares: Player[];
-    lastMoveIndex: number | null;
-}
+import { calculateWinner } from "../utils/calculateWinner";
+import type { Player, HistoryItem } from "../../../types";
+import {
+    PLAYER_O,
+    PLAYER_X,
+    STATUS_DRAW,
+    STATUS_NEXT,
+    STATUS_WINNER,
+} from "../../../constants";
 
 export default function useTicTacToe() {
     const [history, setHistory] = useState<HistoryItem[]>([
@@ -23,11 +26,11 @@ export default function useTicTacToe() {
 
     let status;
     if (winner) {
-        status = `Winner: ${winner} 🎉`;
+        status = `${STATUS_WINNER}${winner} 🎉`;
     } else if (!currentSquares.includes(null)) {
-        status = "Draw!";
+        status = STATUS_DRAW;
     } else {
-        status = `Next player: ${xIsNext ? "X" : "O"}`;
+        status = `${STATUS_NEXT}${xIsNext ? PLAYER_X : PLAYER_O}`;
     }
 
     function handlePlay(nextSquares: Player[]) {

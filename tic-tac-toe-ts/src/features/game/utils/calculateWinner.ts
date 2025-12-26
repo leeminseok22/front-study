@@ -1,9 +1,4 @@
-export type Player = "X" | "O" | null;
-
-interface WinnerResult {
-    winner: Player;
-    line: number[];
-}
+import type { Player, WinnerResult } from "../../../types";
 
 export function calculateWinner(squares: Player[]): WinnerResult | null {
     const lines = [
