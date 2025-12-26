@@ -1,37 +1,16 @@
-import { useState } from "react";
 import Board from "./components/Board";
-import { calculateWinner, type Player } from "./utils/calculateWinner";
-
-interface HistoryItem {
-    squares: Player[];
-    lastMoveIndex: number | null;
-}
+import useTicTacToe from "./hooks/useTicTacToe";
 
 export default function Game() {
-    const [history, setHistory] = useState<HistoryItem[]>([
-        { squares: Array(9).fill(null), lastMoveIndex: null },
-    ]);
-    const [currentMove, setCurrentMove] = useState<number>(0);
-
-    const xIsNext = currentMove % 2 === 0;
-    const currentSquares = history[currentMove].squares;
-
-    function handlePlay(nextSquares: Player[]) {
-        const diffIndex = nextSquares.findIndex(
-            (val, index) => val !== currentSquares[index]
-        );
-
-        const nextHistory = [
-            ...history.slice(0, currentMove + 1),
-            { squares: nextSquares, lastMoveIndex: diffIndex },
-        ];
-        setHistory(nextHistory);
-        setCurrentMove(nextHistory.length - 1);
-    }
-
-    function jumpTo(nextMove: number) {
-        setCurrentMove(nextMove);
-    }
+    const {
+        history,
+        currentSquares,
+        xIsNext,
+        status,
+        winningLine,
+        handlePlay,
+        jumpTo,
+    } = useTicTacToe();
 
     const moves = history.map((step, move) => {
         let description;
@@ -55,18 +34,6 @@ export default function Game() {
         );
     });
 
-    const winInfo = calculateWinner(currentSquares);
-    const winner = winInfo?.winner;
-
-    let status;
-    if (winner) {
-        status = `Winner: ${winner} 🎉`;
-    } else if (!currentSquares.includes(null)) {
-        status = "Draw! (무승부)";
-    } else {
-        status = `Next player: ${xIsNext ? "X" : "O"}`;
-    }
-
     return (
         <div
             className="game"
@@ -76,7 +43,7 @@ export default function Game() {
                     xIsNext={xIsNext}
                     squares={currentSquares}
                     onPlay={handlePlay}
-                    winningLine={winInfo?.line}
+                    winningLine={winningLine}
                 />
             </div>
 
